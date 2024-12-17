@@ -8,33 +8,51 @@
 
 #include <stdint.h>
 
-#define EM_MAX_MEMORY_LIMIT 32000
-#define EM_MAX_NAME_LENGTH  36
+#define EM_EMPLOYEE_MAX_NAME_LENGTH         32
+#define EM_DEPARTMENT_INIT_CAPACITY         8
+#define EM_DEPARTMENT_MAX_CAPACITY          1024
+#define EM_FILE_PARSER_MAX_LINE_LENGTH      256
 
 typedef enum{
     EM_DEPARTMENT_UNKNOWN,
     EM_DEPARTMENT_SALES,
     EM_DEPARTMENT_FINANCE,
-    EM_DEPARTMENT_HIRING,
+    EM_DEPARTMENT_HR,
+    EM_DEPARTMENT_IT,
+    EM_DEPARTMENT_MARKETING,
+    /* ... */
     EM_DEPARTMENT_SIZE
 }EM_Department_e;
 
 typedef struct {
-    char name[EM_MAX_NAME_LENGTH]; /* Name should not exceed maximum name length */
-    uint16_t birth_year;           /* Should store birth year instead of age */
-    EM_Department_e department;    /* Department enum */
+    char name[EM_EMPLOYEE_MAX_NAME_LENGTH];  /* Name should not exceed maximum name length */
+    uint16_t birth_year;                     /* Should store birth year instead of age */
+    EM_Department_e department;              /* Store only Department enum value */
+    uint32_t salary;
 }EM_Employee_t;
 
 typedef struct{
     char* name;
-    EM_Department_e department;
     EM_Employee_t* employees;
-    uint16_t employees_size;
+    uint16_t employees_capacity;
     uint16_t employees_index;
 }EM_Department_t;
 
-EM_Employee_t EM_NewEmployee(char* name, int16_t birth_year, EM_Department_e department);
+EM_Employee_t EM_NewEmployee(char* name, int16_t birth_year, EM_Department_e department, uint32_t salary);
 
-int8_t EM_AppendEmployee(EM_Employee_t employee);
+void EM_PrintEmployee(EM_Employee_t* employee);
+
+int8_t EM_AppendEmployee(EM_Employee_t* employee);
 
 EM_Department_t EM_GetDepartment(EM_Department_e department);
+
+void EM_PrintDepartment(EM_Department_t* department);
+
+EM_Department_e EM_DepartmentByName(const char* department_name);
+
+
+void EM_FreeDepartment(EM_Department_e department);
+
+void EM_Free(void);
+
+int8_t EM_FileParser(char* file_name);
