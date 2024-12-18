@@ -38,18 +38,28 @@ typedef struct{
     uint16_t employees_index;
 }EM_Department_t;
 
+/*
+ * @brief : Employee Constructor. If department enum is out of range (> EM_DEPARTMENT_SIZE)
+ * Employee gets EM_DEPARTMENT_UNKNOWN as department value.
+ * 
+ * @param[in] name       : Employee full name.   
+ * @param[in] birth_year : Employee birth year.
+ * @param[in] department : Employee working department index. Look: EM_Department_e
+ * @param[in] salary     : Employee salary.
+ * 
+ * @return : EM_Employee_t object.
+ */
 EM_Employee_t EM_NewEmployee(char* name, int16_t birth_year, EM_Department_e department, uint32_t salary);
 
-void EM_PrintEmployee(EM_Employee_t* employee);
+void EM_PrintEmployee(const EM_Employee_t* employee);
 
 int8_t EM_AppendEmployee(EM_Employee_t* employee);
 
 EM_Department_t EM_GetDepartment(EM_Department_e department);
 
-void EM_PrintDepartment(EM_Department_t* department);
+void EM_PrintDepartment(EM_Department_t* pDpt);
 
 EM_Department_e EM_DepartmentByName(const char* department_name);
-
 
 void EM_FreeDepartment(EM_Department_e department);
 

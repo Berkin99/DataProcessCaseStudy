@@ -1,0 +1,25 @@
+ID,Name,Age,Department,Salary
+1,Jared Bowman,54,Marketing,145701
+2,Joanna Smith,33,IT,124669
+3,Gregory Garcia,59,IT,91723
+4,Patrick Brown,47,Marketing,69883
+5,Jonathon Hickman,46,IT,95488
+6,Randall Miller,48,Sales,81867
+7,Matthew Barnett,40,Finance,63409
+8,,25,Marketing,55000  # Boş isim
+9,Invalid Age,abc,Sales,78000  # Geçersiz yaş (metin)
+10,Negative Salary,30,IT,-50000  # Negatif maaş
+11,Too Young,0,HR,45000  # Yaş sıfır
+12,Too Old,121,Finance,95000  # Mantıksız yaş
+13,High Salary,35,Sales,99999999  # Mantıksız yüksek maaş
+14,Low Salary,25,HR,0  # Maaş sıfır
+15,Special Characters,29,HR,55000💼  # Özel karakterler (Unicode)
+16,Duplicate ID,33,IT,124669  # Yinelenen ID (ID=2 ile aynı maaş ve yaş)
+17,Duplicate Row,54,Marketing,145701  # Tüm satır yinelenmiş (ID=1 ile aynı)
+18,Extra Column,39,Finance,65000,Extra Data  # Fazladan sütun
+19,Missing Column,31,IT  # Eksik sütun (Maaş yok)
+20,Null Department,28,,48000  # Boş departman
+21,Extra Spaces,  Jared Bowman   ,54,Marketing,145701  # Fazladan boşluk
+22,Long Name,123,IT,100000  # Çok uzun isim
+23,Edge Case,30,SuperLongDepartmentNameExceedingLimit,48000  # Uzun departman adı
+24,Edge Case,30,Sales,"50000"  # Maaş çift tırnak içinde

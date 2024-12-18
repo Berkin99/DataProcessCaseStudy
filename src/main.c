@@ -17,7 +17,7 @@ void printWithCommas(uint32_t number);
 int main(void){
 
     /* Read the csv file */
-    EM_FileParser("Data_Processor_Case_Study.csv");
+    if (EM_FileParser("Data_Processor_Case_Study.csv") != 0) return 1;
 
     /* Program */
     EM_Employee_t max_salary_employee = {0};
@@ -42,11 +42,15 @@ int main(void){
     }
 
     /* Print Results */
-    printf("Total Salary: $%d\n", sum_salary);
+    printf("Total Salary: $");
+    printWithCommas(sum_salary);
+    printf("\n");
     
     printf("Average Age: %.2f\n", avg_age);
     
-    printf("Department with Highest Salary : %s ($%d)\n", EM_GetDepartment(max_salary_employee.department).name, max_salary_employee.salary);
+    printf("Department with Highest Salary : %s ($", EM_GetDepartment(max_salary_employee.department).name);
+    printWithCommas(max_salary_employee.salary);
+    printf(")\n");
     
     printf("Employees per Department:\n");
     for (uint16_t i = 0; i < EM_DEPARTMENT_SIZE; i++)
@@ -60,33 +64,15 @@ int main(void){
     return 0;
 }
 
+/* Prints with commas for each 3 digits */
 void printWithCommas(uint32_t number) {
-    char buffer[20]; 
-    char result[25]; 
-    uint32_t i, j, len, count = 0;
-
-    sprintf(buffer, "%d", number);
-    len = strlen(buffer);
-
-    j = 0;
-
-    for (i = len - 1; i >= 0; i--) {
-        result[j++] = buffer[i];
-        count++;
-
-        /* Add a comma after every 3 digits (except at the end)*/
-        if (count % 3 == 0 && i != 0) {
-            result[j++] = ',';
+    char num[30];
+    sprintf(num, "%u", number);
+    int len = strlen(num);
+    for (int i = 0; i < len; i++) {
+        putchar(num[i]);
+        if ((len - i - 1) % 3 == 0 && i != len - 1) {
+            putchar(',');
         }
     }
-
-    result[j] = '\0';
-
-    for (i = 0; i < j / 2; i++) {
-        char temp = result[i];
-        result[i] = result[j - i - 1];
-        result[j - i - 1] = temp;
-    }
-
-    printf("%s", result);
 }

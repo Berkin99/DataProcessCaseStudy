@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 #include "date.h"
 #include "employee_manager.h"
 
@@ -31,36 +32,36 @@ EM_Employee_t EM_NewEmployee(char* name, int16_t birth_year, EM_Department_e dep
     return new;
 }
 
-void EM_PrintEmployee(EM_Employee_t* employee){
+void EM_PrintEmployee(const EM_Employee_t* employee){
     printf("%s, %d, %d, %d\n",employee->name, employee->birth_year, employee->department, employee->salary);
 }
 
 int8_t EM_AppendEmployee(EM_Employee_t* employee){
     if(employee->department >= EM_DEPARTMENT_SIZE) employee->department = EM_DEPARTMENT_UNKNOWN; /* Department Not Founded */
 
-    EM_Department_t* dpt = &departments[employee->department];
+    EM_Department_t* pDpt = &departments[employee->department];
 
-    if(dpt->employees_index >= dpt->employees_capacity){
+    if(pDpt->employees_index >= pDpt->employees_capacity){
         /* Allocate more memory */
-        if(dpt->employees_capacity == 0){
-            dpt->employees_capacity = EM_DEPARTMENT_INIT_CAPACITY;
-            dpt->employees = malloc(sizeof(EM_Employee_t) * EM_DEPARTMENT_INIT_CAPACITY);
+        if(pDpt->employees_capacity == 0){
+            pDpt->employees_capacity = EM_DEPARTMENT_INIT_CAPACITY;
+            pDpt->employees = malloc(sizeof(EM_Employee_t) * EM_DEPARTMENT_INIT_CAPACITY);
         }
         else{
-            if((dpt->employees_capacity * 2) > EM_DEPARTMENT_MAX_CAPACITY) return 1; /* Max Capacity Exceeded */
-            dpt->employees_capacity *= 2; /* Reallocate with 2 times capacity */
-            dpt->employees = realloc(dpt->employees, dpt->employees_capacity * sizeof(EM_Employee_t));
+            if((pDpt->employees_capacity * 2) > EM_DEPARTMENT_MAX_CAPACITY) return 1; /* Max Capacity Exceeded */
+            pDpt->employees_capacity *= 2; /* Reallocate with 2 times capacity */
+            pDpt->employees = realloc(pDpt->employees, pDpt->employees_capacity * sizeof(EM_Employee_t));
         }
 
-        if(dpt->employees == NULL){ 
-            dpt->employees_capacity = 0; 
+        if(pDpt->employees == NULL){ 
+            pDpt->employees_capacity = 0; 
             return 1; /* Memory Allcoation Failed ! */ 
         } 
     }
 
-    memcpy(&dpt->employees[dpt->employees_index], employee, sizeof(EM_Employee_t));
+    memcpy(&pDpt->employees[pDpt->employees_index], employee, sizeof(EM_Employee_t));
 
-    dpt->employees_index += 1;
+    pDpt->employees_index += 1;
 
     return 0;
 }
@@ -70,8 +71,12 @@ EM_Department_t EM_GetDepartment(EM_Department_e department){
     return departments[department];
 }
 
-void EM_PrintDepartment(EM_Department_t* department){
-    printf("%s, %d, %d\n",department->name, department->employees_capacity, department->employees_index);
+void EM_PrintDepartment(EM_Department_t* pDpt){
+    printf("Department : %s, Capacity : %d, Size : %d\n",pDpt->name, pDpt->employees_capacity, pDpt->employees_index);
+    for (uint16_t i = 0; i < pDpt->employees_index; i++)
+    {
+        EM_PrintEmployee(&pDpt->employees[i]);
+    }
 }
 
 EM_Department_e EM_DepartmentByName(const char* department_name) {
@@ -97,13 +102,17 @@ void EM_Free(void){
     }
 }
 
-static int is_digit(const char c){
-    return (c >= '0' && c <= '9');
+/* Positive Numeric Control */
+static int is_p_numeric(const char* str) {
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (!isdigit(str[i])) return 0;
+    }
+    return 1;
 }
 
-static int is_numeric(const char* str) {
+static int is_alphabetic(const char* str){
     for (size_t i = 0; str[i] != '\0'; i++) {
-        if (!is_digit(str[i])) return 0;
+        if (!isalpha(str[i])) return 0;
     }
     return 1;
 }
@@ -113,7 +122,7 @@ int8_t EM_FileParser(char* file_name) {
 
     FILE* file = fopen(file_name, "r");
     if (file == NULL) {
-        perror("File Error");
+        perror("EM> File Error");
         return 1;
     }
 
@@ -122,7 +131,7 @@ int8_t EM_FileParser(char* file_name) {
 
     /* Read first line and skip. */
     if (fgets(line, sizeof(line), file) == NULL) {
-        printf("File Empty | Read Error\n");
+        printf("EM> File Empty | Read Error\n");
         fclose(file);
         return 1;
     }
@@ -135,18 +144,19 @@ int8_t EM_FileParser(char* file_name) {
 
         /* Parse */
         char* ix = strtok(line, ",");
+        (void)ix;
+
         char* name = strtok(NULL, ",");
         char* age_str = strtok(NULL, ",");
         char* department_str = strtok(NULL, ",");
         char* salary_str = strtok(NULL, ",");
-        (void)ix;
 
         /* Control is there any NULL data */
-        if (!name || !age_str || !department_str || !salary_str)continue;
+        if (!name || !age_str || !department_str || !salary_str) continue;
 
-        /* Numeric Control */
-        if (!is_numeric(age_str) || !is_numeric(salary_str)) continue;
-
+        /* Alphabetic and Numeric Control */
+        if (!is_alphabetic(name) || !is_p_numeric(age_str) || !is_alphabetic(department_str) || !is_p_numeric(salary_str)) continue;
+        
         /* Construct the employee */
         EM_Employee_t employee = EM_NewEmployee(name, (currentYear() - (uint16_t)atoi(age_str)), EM_DepartmentByName(department_str), (uint32_t)atoi(salary_str));
 

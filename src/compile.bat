@@ -10,20 +10,19 @@ set SOURCES=date.c employee_manager.c main.c
 set HEADERS=date.h employee_manager.h
 
 REM Output file name
-set OUTPUT=program.exe
+set OUTPUT=employee_manager_app.exe
 
 REM Start the compilation process
-echo Compilation is starting...
 
 %CC% %CFLAGS% %SOURCES% -o %OUTPUT%
 
-REM Check if the compilation was successful
+REM 
 if %ERRORLEVEL% neq 0 (
     echo Compilation failed!
     exit /b %ERRORLEVEL%
 )
 
-echo Compilation successful! Output: %OUTPUT%
+echo Created : %OUTPUT%
 
 REM End of script
 pause
