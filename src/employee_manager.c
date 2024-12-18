@@ -1,4 +1,4 @@
-/* 
+/** 
  *  employee_manager.c
  *
  *  Author : Berkin Baris YILMAZ 
@@ -40,6 +40,8 @@ void EM_PrintEmployee(const EM_Employee_t* employee){
 
 int8_t EM_AppendEmployee(EM_Employee_t* employee){
     if(employee->department >= EM_DEPARTMENT_SIZE) employee->department = EM_DEPARTMENT_UNKNOWN; /* Department Not Founded */
+    EM_Employee_t buffer;
+    if(EM_FindEmployeeByID(EM_DEPARTMENT_UNKNOWN, employee->id, &buffer)) return 1; /* ID Already Existed */
 
     EM_Department_t* pDpt = &departments[employee->department];
 
@@ -100,7 +102,7 @@ int8_t EM_FindEmployeeByID(EM_Department_e department, uint32_t id, EM_Employee_
         }
     }
 
-    /* EM_DEPARTMENT_UNKNOWN should be zero for this loop */
+    /* Should be <EM_DEPARTMENT_UNKNOWN = 0> for this loop */
     if(department == EM_DEPARTMENT_UNKNOWN){
         for (uint16_t i = 1; i < EM_DEPARTMENT_SIZE; i++)
             if(EM_FindEmployeeByID(i, id, pEmployee)) return 1;
@@ -144,27 +146,21 @@ static int is_alphabetic(const char* str) {
     return 1; 
 }
 
-int8_t EM_FileParser(char* file_name, uint8_t debug) {
-    if (file_name == NULL) return 1;
-
-    FILE* file = fopen(file_name, "r");
-    if (file == NULL) {
-        perror("EM> File Error");
-        return 1;
-    }
+int8_t EM_FileParser(FILE* file, uint8_t debug) {
+    if (file == NULL) return 1;
 
     char line[EM_FILE_PARSER_MAX_LINE_LENGTH];
     uint16_t line_number = 0;
 
     /* Read first line and skip. */
-    if (fgets(line, sizeof(line), file) == NULL) {
+    if (fgets(line, EM_FILE_PARSER_MAX_LINE_LENGTH, file) == NULL) {
         printf("EM> File Empty | Read Error\n");
         fclose(file);
         return 1;
     }
 
-    /* Reading line by line. */
-    while (fgets(line, sizeof(line), file)) {
+    /* Reading line by line. Clamped w maximum read value */
+    while (fgets(line, EM_FILE_PARSER_MAX_LINE_LENGTH, file)) {
         line_number++;
 
         line[strcspn(line, "\r\n")] = '\0';
@@ -185,15 +181,12 @@ int8_t EM_FileParser(char* file_name, uint8_t debug) {
         /* Construct the employee */
         EM_Employee_t employee = EM_NewEmployee((uint32_t)atoi(id), name, (currentYear() - (uint16_t)atoi(age_str)), EM_DepartmentByName(department_str), (uint32_t)atoi(salary_str));
         
-        if(debug){
-            printf("Line %d: ",line_number);
+        if ((EM_AppendEmployee(&employee) == 0) && debug){
+            printf("EM> %d: ",line_number);
             EM_PrintEmployee(&employee);
         }
         
-        if (EM_AppendEmployee(&employee) != 0) {
-            printf("EM> Memory Error: Employee not appended! (Line : %d): %s\n", line_number, name);
-        }
-        
+
     }
 
     fclose(file);

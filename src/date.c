@@ -1,4 +1,4 @@
-/* 
+/** 
  *  date.c
  *
  *  Author : Berkin Baris YILMAZ 

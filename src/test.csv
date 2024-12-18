@@ -14,7 +14,7 @@ ID,Name,Age,Department,Salary
 13,High Salary,35,Sales,99999999
 14,Low Salary,25,HR,0
 15,Special Characters,29,HR,55000💼
-16,Duplicate ID,33,IT,124669
+1,Duplicate ID,33,IT,124669
 17,Duplicate Row,54,Marketing,145701
 18,Extra Column,39,Finance,65000,Extra Data
 19,Missing Column,31,IT

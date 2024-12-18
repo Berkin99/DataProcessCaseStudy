@@ -1,4 +1,4 @@
-/* 
+/** 
  *  main.c
  *
  *  Author : Berkin Baris YILMAZ 
@@ -17,7 +17,8 @@ void printWithCommas(uint32_t number);
 int main(void){
 
     /* Read the csv file */
-    if (EM_FileParser("test.csv", 1) != 0) return 1;
+    FILE* file = fopen("test.csv", "r");
+    if (EM_FileParser(file, 1) != 0) return 1;
 
     /* Program */
     EM_Employee_t max_salary_employee = {0};
