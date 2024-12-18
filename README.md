@@ -10,11 +10,11 @@ The Data Processor project is a C-based executable program designed to parse and
 
 ## CSV File
 #### CSV Format:
-- CSV Format Tokens : <UniqueID>,<Name>,<Age>,<Department>,<Salary>
+- CSV Format Tokens : UniqueID,Name,Age,Department,Salary
 - Example csv line  : 12,John Doe,27,IT,120000
 
 #### CSV Invalid Lines:
-- Numeric token has non numeric | Alphabetic token has non <Name-Character>.
+- Numeric token has non numeric | Alphabetic token has non **Name-Character**.
 - ID Recurrence.
 - Empty token | Empty line.
 - Numeric token has more than 10 digit.
@@ -27,13 +27,14 @@ The Data Processor project is a C-based executable program designed to parse and
 - If the file format is incorrect, print: Error: Invalid file format.
 - Can print the results with "-f" argument to the program, even if corrupted data.
 - Long names clipped with name byte limit.
-- Employees with unknown department, stored in <Unknown> department.
+- Employees with unknown department, stored in **Unknown** department.
 
 ## File Structure
 
 - **main.c**: The main program logic for processing employee data.
 - **employee_manager.h/.c**: Manages employees and departments, including memory allocation.
-- **date.h**: Provides utility functions for date operations, such as retrieving the current year.
+- **utils/date.h/.c**: Provides utility functions for date operations, such as retrieving the current year.
+- **utils/strtype.h/.c**: Provides utility functions for string operations.
 
 ## How to Use
 
