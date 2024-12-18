@@ -9,16 +9,29 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "date.h"
+#include "utils/date.h"
 #include "employee_manager.h"
 
 void printWithCommas(uint32_t number);
 
-int main(void){
+int main(int argc, char** argv){
+
+    /* Force argument to the program */
+    uint8_t force; 
+    if(argc >= 2) force = strcmp(argv[1], "-f") == 0;
 
     /* Read the csv file */
-    FILE* file = fopen("test.csv", "r");
-    if (EM_FileParser(file, 1) != 0) return 1;
+    FILE* file = fopen("data_corrupted.csv", "r");
+
+    /* Parse The file */
+    int8_t rslt = EM_FileParser(file, 1);
+    if (rslt != 0){
+        if(file == NULL)    printf("Error: File data.csv not found.\n");
+        if(rslt == 1)       printf("Error: Invalid file format.\n");
+        if(rslt == 2)       printf("Error: Memory Error.\n");
+        if(!force)          return 1;
+    }
+    fclose(file);
 
     /* Program */
     EM_Employee_t max_salary_employee = {0};
@@ -26,7 +39,7 @@ int main(void){
     float         avg_age = 0.0;
     float         avg_index = 0.0;
 
-    for (uint16_t i = 0; i < EM_DEPARTMENT_SIZE; i++)
+    for (uint16_t i = 1; i < EM_DEPARTMENT_SIZE; i++)
     {
         EM_Department_t dpt = EM_GetDepartment(i);
  
@@ -35,7 +48,7 @@ int main(void){
             sum_salary += dpt.employees[j].salary;
             if(dpt.employees[j].salary > max_salary_employee.salary) max_salary_employee = dpt.employees[j];
             float age_n = (float)(currentYear() - dpt.employees[j].birth_year);
-            avg_age = avg_age * (avg_index / (avg_index + 1.0)) + age_n * (1.0 / (avg_index + 1.0)); /* Zn = Zn * i/(i+1) + Xn * 1/(i+1) */
+            avg_age = avg_age * (avg_index / (avg_index + 1.0)) + age_n * (1.0 / (avg_index + 1.0)); /* Zn = Z(n-1) * i/(i+1) + Xn * 1/(i+1) */
             avg_index += 1;
         }
         
@@ -45,20 +58,16 @@ int main(void){
     printf("Total Salary: $");
     printWithCommas(sum_salary);
     printf("\n");
-    
     printf("Average Age: %.2f\n", avg_age);
-    
     printf("Department with Highest Salary : %s ($", EM_GetDepartment(max_salary_employee.department).name);
     printWithCommas(max_salary_employee.salary);
     printf(")\n");
-    
     printf("Employees per Department:\n");
     for (uint16_t i = 0; i < EM_DEPARTMENT_SIZE; i++)
     {
         EM_Department_t dpt = EM_GetDepartment(i);
         printf("%s: %d\n", dpt.name, dpt.employees_index);
     }
-    
     EM_Free();
 
     return 0;

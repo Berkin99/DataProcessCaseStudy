@@ -1,0 +1,20 @@
+ID,Name,Age,Department,Salary
+101,Incomplete Data,32,Marketing
+102,Missing Salary,40,IT,
+103,Only Two Fields,Marketing,120000
+,,,,,
+104,,
+105,Invalid@Name,30,Sales,150000
+106,Normal Name,-30,IT,130000
+107,SpecialChars$,45,Marketing,120#000
+108,Future Born,3000,Finance,100000
+110,Extra Comma,33,Sales,,120000
+111,,Missing Fields,,,
+112,Too,Many,Commas,,,,,,,,,,
+113,Numeric Name,45,Marketing,12O34O
+114,Department As Number,40,123,50000
+115,Age As Text,Thirty,HR,80000
+116,Unknown Department,34,UnknownDept,50000
+117,Typo in Department,50,Markting,45000
+118,Extra Spaces, 33 ,  Sales , 120000
+119
