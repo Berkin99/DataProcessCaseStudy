@@ -13,5 +13,3 @@ if %ERRORLEVEL% neq 0 (
 )
 
 echo Created : %OUTPUT%
-REM
-pause
