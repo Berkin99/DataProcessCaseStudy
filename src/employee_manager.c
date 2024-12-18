@@ -23,9 +23,11 @@ static EM_Department_t departments[EM_DEPARTMENT_SIZE] = {
     [EM_DEPARTMENT_MARKETING].name  = "Marketing",
 };
 
-EM_Employee_t EM_NewEmployee(char* name, int16_t birth_year, EM_Department_e department, uint32_t salary){
+EM_Employee_t EM_NewEmployee(uint32_t id, char* name, int16_t birth_year, EM_Department_e department, uint32_t salary){
     EM_Employee_t new;
+    new.id = id;
     strncpy(new.name, name, EM_EMPLOYEE_MAX_NAME_LENGTH);
+    new.name[EM_EMPLOYEE_MAX_NAME_LENGTH - 1] = '\0';
     new.birth_year = birth_year;
     new.department = department;
     new.salary = salary;
@@ -33,7 +35,7 @@ EM_Employee_t EM_NewEmployee(char* name, int16_t birth_year, EM_Department_e dep
 }
 
 void EM_PrintEmployee(const EM_Employee_t* employee){
-    printf("%s, %d, %d, %d\n",employee->name, employee->birth_year, employee->department, employee->salary);
+    printf("%d : %s, %d, %d, %d\n",employee->id, employee->name, employee->birth_year, employee->department, employee->salary);
 }
 
 int8_t EM_AppendEmployee(EM_Employee_t* employee){
@@ -87,6 +89,26 @@ EM_Department_e EM_DepartmentByName(const char* department_name) {
     return EM_DEPARTMENT_UNKNOWN;
 }
 
+int8_t EM_FindEmployeeByID(EM_Department_e department, uint32_t id, EM_Employee_t* pEmployee){
+    if(department > EM_DEPARTMENT_SIZE) return 0;
+
+    for (uint16_t i = 0; i < departments[department].employees_index; i++)
+    {
+        if(departments[department].employees[i].id == id){
+            *pEmployee = departments[department].employees[i];
+            return 1;
+        }
+    }
+
+    /* EM_DEPARTMENT_UNKNOWN should be zero for this loop */
+    if(department == EM_DEPARTMENT_UNKNOWN){
+        for (uint16_t i = 1; i < EM_DEPARTMENT_SIZE; i++)
+            if(EM_FindEmployeeByID(i, id, pEmployee)) return 1;
+    }
+
+    return 0;
+}
+
 void EM_FreeDepartment(EM_Department_e department){
     if(department >= EM_DEPARTMENT_SIZE) return; /* Department Not Founded */
 
@@ -110,6 +132,7 @@ static int is_p_numeric(const char* str) {
     return 1;
 }
 
+/* Positive Alphabetic Control */
 static int is_alphabetic(const char* str) {
     if (str == NULL) return 0; 
 
@@ -147,26 +170,25 @@ int8_t EM_FileParser(char* file_name, uint8_t debug) {
         line[strcspn(line, "\r\n")] = '\0';
 
         /* Parse */
-        char* ix = strtok(line, ",");
-        (void)ix;
-
+        char* id = strtok(line, ",");
         char* name = strtok(NULL, ",");
         char* age_str = strtok(NULL, ",");
         char* department_str = strtok(NULL, ",");
         char* salary_str = strtok(NULL, ",");
 
         /* Control is there any NULL data */
-        if (!name || !age_str || !department_str || !salary_str) continue;
+        if (!id || !name || !age_str || !department_str || !salary_str) continue;
+        
         /* Alphabetic and Numeric Control */
-        if (!is_alphabetic(name) || !is_p_numeric(age_str) || !is_alphabetic(department_str) || !is_p_numeric(salary_str)) continue;
+        if (!is_p_numeric(id) || !is_alphabetic(name) || !is_p_numeric(age_str) || !is_alphabetic(department_str) || !is_p_numeric(salary_str)) continue;
     
         /* Construct the employee */
-        EM_Employee_t employee = EM_NewEmployee(name, (currentYear() - (uint16_t)atoi(age_str)), EM_DepartmentByName(department_str), (uint32_t)atoi(salary_str));
+        EM_Employee_t employee = EM_NewEmployee((uint32_t)atoi(id), name, (currentYear() - (uint16_t)atoi(age_str)), EM_DepartmentByName(department_str), (uint32_t)atoi(salary_str));
         
         if(debug){
-            printf("%d : ",line_number);
+            printf("Line %d: ",line_number);
             EM_PrintEmployee(&employee);
-        } 
+        }
         
         if (EM_AppendEmployee(&employee) != 0) {
             printf("EM> Memory Error: Employee not appended! (Line : %d): %s\n", line_number, name);

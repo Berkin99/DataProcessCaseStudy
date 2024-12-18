@@ -31,7 +31,6 @@ int main(void){
  
         for (uint16_t j = 0; j < dpt.employees_index; j++)
         {
-            
             sum_salary += dpt.employees[j].salary;
             if(dpt.employees[j].salary > max_salary_employee.salary) max_salary_employee = dpt.employees[j];
             float age_n = (float)(currentYear() - dpt.employees[j].birth_year);
