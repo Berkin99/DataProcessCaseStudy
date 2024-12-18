@@ -21,7 +21,7 @@ int main(int argc, char** argv){
     if(argc >= 2) force = strcmp(argv[1], "-f") == 0;
 
     /* Read the csv file */
-    FILE* file = fopen("data_corrupted.csv", "r");
+    FILE* file = fopen("data.csv", "r");
 
     /* Parse The file */
     int8_t rslt = EM_FileParser(file, 1);
