@@ -17,7 +17,7 @@ void printWithCommas(uint32_t number);
 int main(void){
 
     /* Read the csv file */
-    if (EM_FileParser("Data_Processor_Case_Study.csv") != 0) return 1;
+    if (EM_FileParser("test.csv", 1) != 0) return 1;
 
     /* Program */
     EM_Employee_t max_salary_employee = {0};
@@ -66,7 +66,7 @@ int main(void){
 
 /* Prints with commas for each 3 digits */
 void printWithCommas(uint32_t number) {
-    char num[30];
+    char num[12];
     sprintf(num, "%u", number);
     int len = strlen(num);
     for (int i = 0; i < len; i++) {

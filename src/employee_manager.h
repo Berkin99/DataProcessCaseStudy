@@ -32,10 +32,10 @@ typedef struct {
 }EM_Employee_t;
 
 typedef struct{
-    char* name;
-    EM_Employee_t* employees;
-    uint16_t employees_capacity;
-    uint16_t employees_index;
+    char* name;                     /* Department Name : Should be defined in employee_manager.c/departments */
+    EM_Employee_t* employees;       /* Allocated memory pointer for Employee objects */
+    uint16_t employees_capacity;    /* Allocated memory capacity */
+    uint16_t employees_index;       /* <employees> Size | Array index for Next employee */
 }EM_Department_t;
 
 /*
@@ -65,4 +65,4 @@ void EM_FreeDepartment(EM_Department_e department);
 
 void EM_Free(void);
 
-int8_t EM_FileParser(char* file_name);
+int8_t EM_FileParser(char* file_name, uint8_t debug);

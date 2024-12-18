@@ -110,14 +110,18 @@ static int is_p_numeric(const char* str) {
     return 1;
 }
 
-static int is_alphabetic(const char* str){
+static int is_alphabetic(const char* str) {
+    if (str == NULL) return 0; 
+
     for (size_t i = 0; str[i] != '\0'; i++) {
-        if (!isalpha(str[i])) return 0;
+        if (!isalpha((unsigned char)str[i]) && str[i] != ' ') {
+            return 0;
+        }
     }
-    return 1;
+    return 1; 
 }
 
-int8_t EM_FileParser(char* file_name) {
+int8_t EM_FileParser(char* file_name, uint8_t debug) {
     if (file_name == NULL) return 1;
 
     FILE* file = fopen(file_name, "r");
@@ -153,13 +157,17 @@ int8_t EM_FileParser(char* file_name) {
 
         /* Control is there any NULL data */
         if (!name || !age_str || !department_str || !salary_str) continue;
-
         /* Alphabetic and Numeric Control */
         if (!is_alphabetic(name) || !is_p_numeric(age_str) || !is_alphabetic(department_str) || !is_p_numeric(salary_str)) continue;
-        
+    
         /* Construct the employee */
         EM_Employee_t employee = EM_NewEmployee(name, (currentYear() - (uint16_t)atoi(age_str)), EM_DepartmentByName(department_str), (uint32_t)atoi(salary_str));
-
+        
+        if(debug){
+            printf("%d : ",line_number);
+            EM_PrintEmployee(&employee);
+        } 
+        
         if (EM_AppendEmployee(&employee) != 0) {
             printf("EM> Memory Error: Employee not appended! (Line : %d): %s\n", line_number, name);
         }
