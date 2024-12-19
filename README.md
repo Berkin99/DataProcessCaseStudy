@@ -147,14 +147,6 @@ Defines attributes of a department:
 - **`EM_FileParser`**
   Parses employee data from a CSV file and adds employees to departments.
 
-### Helper Functions
-
-- **`is_p_numeric`**
-  Validates if a string contains only positive numeric characters.
-
-- **`is_alphabetic`**
-  Validates if a string contains only alphabetic characters and spaces.
-
 ## How to Use
 
 1. Include the required headers (`employee_manager.h`, `date.h`) in your project.
